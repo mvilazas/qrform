@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Verificación QR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gold: #B8975A;
+    --gold-dark: #8C6D3A;
+    --cream: #FAF7F2;
+    --cream-dark: #F0EBE0;
+    --ink: #2A2118;
+    --ink-soft: #5C4E38;
+    --border: rgba(184,151,90,0.25);
+    --border-strong: rgba(184,151,90,0.55);
+  }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ── LOGIN ── */
+  #login-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px;
+  }
+
+  .login-card {
+    background: white;
+    border: 0.5px solid var(--border);
+    padding: 44px 40px;
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+  }
+
+  .login-ornament {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .login-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 300;
+    margin-bottom: 28px;
+    color: var(--ink);
+  }
+
+  .login-field {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--cream);
+    border: 0.5px solid var(--border);
+    border-radius: 1px;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--ink);
+    outline: none;
+    text-align: center;
+    letter-spacing: 0.15em;
+    margin-bottom: 14px;
+    transition: border-color 0.2s;
+  }
+
+  .login-field:focus { border-color: var(--gold); }
+
+  .login-btn {
+    width: 100%;
+    padding: 13px;
+    background: var(--ink);
+    color: var(--cream);
+    border: none;
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 1px;
+    transition: background 0.2s;
+  }
+
+  .login-btn:hover { background: var(--gold-dark); }
+
+  .login-error {
+    font-size: 12px;
+    color: #B03A2E;
+    margin-top: 10px;
+    display: none;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── ADMIN APP ── */
+  #admin-app { display: none; }
+
+  /* Header */
+  .admin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 28px;
+    border-bottom: 0.5px solid var(--border);
+    background: var(--ink);
+  }
+
+  .admin-header-left {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--cream);
+    letter-spacing: 0.04em;
+  }
+
+  .admin-header-left span {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold-light, #D4B57A);
+    display: block;
+    font-family: 'Jost', sans-serif;
+    font-weight: 400;
+    margin-bottom: 2px;
+  }
+
+  .logout-btn {
+    background: none;
+    border: 0.5px solid rgba(184,151,90,0.4);
+    color: var(--gold);
+    padding: 7px 16px;
+    font-family: 'Jost', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 1px;
+  }
+
+  .logout-btn:hover { background: rgba(184,151,90,0.1); }
+
+  /* Content */
+  .admin-body {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 36px 24px 64px;
+  }
+
+  /* Stats bar */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .stat-card {
+    background: white;
+    border: 0.5px solid var(--border);
+    padding: 16px 18px;
+    text-align: center;
+  }
+
+  .stat-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 300;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 5px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 400;
+  }
+
+  /* Search / Verify */
+  .verify-panel {
+    background: white;
+    border: 0.5px solid var(--border);
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .panel-label {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+    font-weight: 400;
+  }
+
+  .verify-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  .verify-input {
+    flex: 1;
+    padding: 12px 14px;
+    background: var(--cream);
+    border: 0.5px solid var(--border);
+    border-radius: 1px;
+    font-family: 'Jost', monospace;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--ink);
+    outline: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: border-color 0.2s;
+  }
+
+  .verify-input:focus { border-color: var(--gold); }
+
+  .verify-btn {
+    padding: 12px 20px;
+    background: var(--ink);
+    color: var(--cream);
+    border: none;
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 1px;
+    white-space: nowrap;
+    transition: background 0.2s;
+  }
+
+  .verify-btn:hover { background: var(--gold-dark); }
+
+  .verify-hint {
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: 9px;
+    letter-spacing: 0.03em;
+  }
+
+  /* Client card */
+  .client-result {
+    display: none;
+    background: white;
+    border: 0.5px solid var(--border);
+    overflow: hidden;
+    margin-bottom: 24px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+  .client-result.visible { display: block; }
+
+  .result-header {
+    background: var(--ink);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .client-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    color: var(--ink);
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  .result-header-info p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--cream);
+    line-height: 1.1;
+  }
+
+  .result-header-info span {
+    font-size: 11px;
+    color: #D4B57A;
+    letter-spacing: 0.12em;
+    font-weight: 400;
+  }
+
+  .verified-chip {
+    margin-left: auto;
+    background: rgba(26,122,74,0.25);
+    color: #6ED9A0;
+    padding: 5px 12px;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 400;
+    flex-shrink: 0;
+  }
+
+  .result-body {
+    padding: 0 24px;
+  }
+
+  .result-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 13px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .result-field:last-child { border-bottom: none; }
+
+  .rf-label {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .rf-value {
+    font-size: 13px;
+    color: var(--ink);
+    text-align: right;
+    font-weight: 400;
+  }
+
+  /* Not found */
+  .not-found {
+    display: none;
+    background: #FEF0EE;
+    border: 0.5px solid #F0C4BB;
+    padding: 18px 22px;
+    text-align: center;
+    color: #8C2A1C;
+    font-size: 13px;
+    margin-bottom: 24px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .not-found.visible { display: block; }
+
+  /* Client list */
+  .list-panel {
+    background: white;
+    border: 0.5px solid var(--border);
+    overflow: hidden;
+  }
+
+  .list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .list-title {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 400;
+  }
+
+  .list-search {
+    padding: 7px 12px;
+    background: var(--cream);
+    border: 0.5px solid var(--border);
+    border-radius: 1px;
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    color: var(--ink);
+    outline: none;
+    width: 180px;
+  }
+
+  .list-search:focus { border-color: var(--gold); }
+
+  .list-empty {
+    padding: 32px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  .client-row {
+    display: flex;
+    align-items: center;
+    padding: 14px 20px;
+    border-bottom: 0.5px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+    gap: 14px;
+  }
+
+  .client-row:last-child { border-bottom: none; }
+  .client-row:hover { background: var(--cream); }
+
+  .row-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--cream-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    color: var(--gold-dark);
+    flex-shrink: 0;
+    font-weight: 500;
+  }
+
+  .row-info { flex: 1; min-width: 0; }
+
+  .row-name {
+    font-size: 13px;
+    color: var(--ink);
+    font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .row-empresa {
+    font-size: 11px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .row-id {
+    font-family: monospace;
+    font-size: 11px;
+    color: var(--gold-dark);
+    letter-spacing: 0.06em;
+    flex-shrink: 0;
+  }
+
+  .row-fecha {
+    font-size: 11px;
+    color: var(--ink-soft);
+    flex-shrink: 0;
+  }
+
+  /* Config */
+  .config-panel {
+    background: white;
+    border: 0.5px solid var(--border);
+    padding: 24px;
+    margin-top: 24px;
+  }
+
+  .config-field {
+    margin-bottom: 14px;
+  }
+
+  .config-label {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 7px;
+    font-weight: 400;
+  }
+
+  .config-input {
+    width: 100%;
+    padding: 11px 14px;
+    background: var(--cream);
+    border: 0.5px solid var(--border);
+    border-radius: 1px;
+    font-family: monospace;
+    font-size: 12px;
+    color: var(--ink);
+    outline: none;
+  }
+
+  .config-input:focus { border-color: var(--gold); }
+
+  .config-save {
+    padding: 10px 20px;
+    background: var(--gold-dark);
+    color: white;
+    border: none;
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 1px;
+    transition: background 0.2s;
+  }
+
+  .config-save:hover { background: var(--gold); color: var(--ink); }
+
+  .config-status { font-size: 11px; color: var(--gold-dark); margin-top: 7px; }
+
+  .script-box {
+    width: 100%;
+    padding: 12px;
+    background: var(--cream);
+    border: 0.5px solid var(--border);
+    border-radius: 1px;
+    font-family: monospace;
+    font-size: 11px;
+    color: var(--ink);
+    resize: vertical;
+    min-height: 200px;
+    outline: none;
+    line-height: 1.5;
+    margin-top: 8px;
+  }
+
+  .danger-btn {
+    padding: 9px 18px;
+    background: none;
+    border: 0.5px solid #C0392B;
+    color: #C0392B;
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 1px;
+    margin-top: 8px;
+    transition: all 0.2s;
+  }
+
+  .danger-btn:hover { background: #C0392B; color: white; }
+
+  .divider { display:flex; align-items:center; gap:12px; margin: 20px 0; }
+  .div-line { flex:1; height:0.5px; background: var(--border); }
+  .div-gem { width:6px; height:6px; background:var(--gold); transform:rotate(45deg); flex-shrink:0; }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    border-bottom: 0.5px solid var(--border);
+    margin-bottom: 28px;
+    gap: 0;
+  }
+
+  .tab {
+    padding: 11px 20px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .tab.active {
+    color: var(--gold-dark);
+    border-bottom-color: var(--gold);
+  }
+
+  .tab:hover:not(.active) { color: var(--ink); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  @media (max-width: 520px) {
+    .stats-bar { grid-template-columns: 1fr 1fr; }
+    .verify-row { flex-direction: column; }
+    .verify-btn { width: 100%; }
+    .list-search { width: 130px; }
+    .row-id, .row-fecha { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <p class="login-ornament">✦ Acceso Restringido ✦</p>
+    <h1 class="login-title">Panel Admin</h1>
+    <input
+      class="login-field"
+      id="pwd-input"
+      type="password"
+      placeholder="Contraseña"
+      autocomplete="current-password"
+      onkeydown="if(event.key==='Enter') doLogin()"
+    >
+    <button class="login-btn" onclick="doLogin()">Ingresar →</button>
+    <p class="login-error" id="login-error">Contraseña incorrecta.</p>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin-app">
+  <div class="admin-header">
+    <div class="admin-header-left">
+      <span>Panel Administrador</span>
+      Verificación QR
+    </div>
+    <button class="logout-btn" onclick="doLogout()">Cerrar sesión</button>
+  </div>
+
+  <div class="admin-body">
+
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div class="stat-number" id="stat-total">0</div>
+        <div class="stat-label">Clientes</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="stat-hoy">0</div>
+        <div class="stat-label">Hoy</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="stat-mes">0</div>
+        <div class="stat-label">Este mes</div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('verificar')">Verificar QR</button>
+      <button class="tab" onclick="switchTab('clientes')">Clientes</button>
+      <button class="tab" onclick="switchTab('config')">Configuración</button>
+    </div>
+
+    <!-- TAB: Verificar -->
+    <div class="tab-content active" id="tab-verificar">
+      <div class="verify-panel">
+        <p class="panel-label">— Ingrese el ID del QR escaneado</p>
+        <div class="verify-row">
+          <input
+            class="verify-input"
+            id="scan-input"
+            placeholder="JYM-XXXXXXXX"
+            oninput="this.value=this.value.toUpperCase()"
+            onkeydown="if(event.key==='Enter') verifyClient()"
+          >
+          <button class="verify-btn" onclick="verifyClient()">Verificar</button>
+        </div>
+        <p class="verify-hint">El QR contiene el ID del cliente. Puede escribirlo manualmente o pegarlo aquí.</p>
+      </div>
+
+      <div class="client-result" id="client-result">
+        <div class="result-header">
+          <div class="client-avatar" id="res-avatar">JD</div>
+          <div class="result-header-info">
+            <p id="res-nombre">—</p>
+            <span id="res-empresa">—</span>
+          </div>
+          <div class="verified-chip">✓ Verificado</div>
+        </div>
+        <div class="result-body">
+          <div class="result-field">
+            <span class="rf-label">RUT Empresa</span>
+            <span class="rf-value" id="res-rut">—</span>
+          </div>
+          <div class="result-field">
+            <span class="rf-label">Email</span>
+            <span class="rf-value" id="res-email">—</span>
+          </div>
+          <div class="result-field">
+            <span class="rf-label">Teléfono</span>
+            <span class="rf-value" id="res-telefono">—</span>
+          </div>
+          <div class="result-field">
+            <span class="rf-label">ID QR</span>
+            <span class="rf-value" id="res-id" style="font-family:monospace;letter-spacing:0.08em;color:var(--gold-dark)">—</span>
+          </div>
+          <div class="result-field" style="border-bottom:none;">
+            <span class="rf-label">Registrado</span>
+            <span class="rf-value" id="res-fecha">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="not-found" id="not-found">
+        <strong>QR no encontrado.</strong><br>El código no corresponde a ningún cliente registrado.
+      </div>
+    </div>
+
+    <!-- TAB: Clientes -->
+    <div class="tab-content" id="tab-clientes">
+      <div class="list-panel">
+        <div class="list-header">
+          <span class="list-title">— Todos los clientes</span>
+          <input class="list-search" id="list-search" placeholder="Buscar..." oninput="renderList()">
+        </div>
+        <div id="client-list"><div class="list-empty">No hay clientes registrados aún.</div></div>
+      </div>
+    </div>
+
+    <!-- TAB: Config -->
+    <div class="tab-content" id="tab-config">
+      <div class="config-panel">
+        <p class="panel-label">— Contraseña del panel</p>
+        <div class="config-field">
+          <label class="config-label">Nueva contraseña</label>
+          <input class="config-input" id="new-pwd" type="password" placeholder="Nueva contraseña">
+        </div>
+        <button class="config-save" onclick="changePwd()">Guardar contraseña</button>
+        <p class="config-status" id="pwd-status"></p>
+      </div>
+
+      <div class="config-panel" style="margin-top:16px;">
+        <p class="panel-label">— Conexión Google Sheets</p>
+        <div class="config-field">
+          <label class="config-label">URL del Apps Script</label>
+          <input class="config-input" id="sheets-url" placeholder="https://script.google.com/macros/s/.../exec">
+        </div>
+        <button class="config-save" onclick="saveSheets()">Guardar URL</button>
+        <p class="config-status" id="sheets-status"></p>
+
+        <div class="divider"><div class="div-line"></div><div class="div-gem"></div><div class="div-line"></div></div>
+
+        <p class="panel-label">— Script para Google Apps Script</p>
+        <p style="font-size:12px;color:var(--ink-soft);margin-bottom:4px;line-height:1.6">Copie este script en Extensiones → Apps Script de su hoja de Google:</p>
+        <textarea class="script-box" id="script-box" readonly></textarea>
+        <button class="config-save" style="margin-top:8px" onclick="copyScript()">Copiar script</button>
+      </div>
+
+      <div class="config-panel" style="margin-top:16px;">
+        <p class="panel-label">— Datos locales</p>
+        <p style="font-size:12px;color:var(--ink-soft);line-height:1.6;margin-bottom:12px">
+          Los datos se almacenan localmente en este dispositivo. Mientras más dispositivos compartan la misma URL de Sheets, la base estará sincronizada.
+        </p>
+        <p style="font-size:12px;color:var(--ink-soft);margin-bottom:10px">
+          Clientes en base local: <strong id="local-count" style="color:var(--ink)">0</strong>
+        </p>
+        <button class="danger-btn" onclick="clearAll()">Borrar todos los datos locales</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// CONFIGURACIÓN — Cambia la contraseña aquí
+// antes de subir a GitHub
+// ══════════════════════════════════════════
+const DEFAULT_PASSWORD = 'joyeria2024';
+
+const APPS_SCRIPT = `function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = JSON.parse(e.postData.contents);
+  sheet.appendRow([
+    data.id, data.rut, data.nombre, data.empresa,
+    data.email, data.telefono, data.fecha, data.hora
+  ]);
+  return ContentService
+    .createTextOutput(JSON.stringify({status:'ok'}))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doGet(e) {
+  var id = e.parameter.id;
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = sheet.getDataRange().getValues();
+  for (var i = 1; i < data.length; i++) {
+    if (String(data[i][0]).trim() === String(id).trim()) {
+      return ContentService.createTextOutput(JSON.stringify({
+        found: true,
+        id: data[i][0], rut: data[i][1], nombre: data[i][2],
+        empresa: data[i][3], email: data[i][4],
+        telefono: data[i][5], fecha: data[i][6], hora: data[i][7]
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+  }
+  return ContentService
+    .createTextOutput(JSON.stringify({found: false}))
+    .setMimeType(ContentService.MimeType.JSON);
+}`;
+
+// ── LOGIN ──
+function getPassword() {
+  return localStorage.getItem('jym_admin_pwd') || DEFAULT_PASSWORD;
+}
+
+function doLogin() {
+  const input = document.getElementById('pwd-input').value;
+  if (input === getPassword()) {
+    sessionStorage.setItem('jym_auth', '1');
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-app').style.display = 'block';
+    initAdmin();
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+    document.getElementById('pwd-input').value = '';
+    document.getElementById('pwd-input').focus();
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('jym_auth');
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('admin-app').style.display = 'none';
+  document.getElementById('pwd-input').value = '';
+}
+
+// Mantenerse logueado en misma sesión del navegador
+window.addEventListener('load', () => {
+  if (sessionStorage.getItem('jym_auth') === '1') {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-app').style.display = 'block';
+    initAdmin();
+  }
+  const url = localStorage.getItem('jym_sheets_url') || '';
+  document.getElementById('sheets-url').value = url;
+  document.getElementById('script-box').value = APPS_SCRIPT;
+});
+
+// ── INIT ──
+function initAdmin() {
+  updateStats();
+  renderList();
+  document.getElementById('local-count').textContent = Object.keys(getDB()).length;
+}
+
+// ── DB ──
+function getDB() {
+  try { return JSON.parse(localStorage.getItem('jym_db') || '{}'); } catch(e) { return {}; }
+}
+
+function saveDB(db) {
+  localStorage.setItem('jym_db', JSON.stringify(db));
+}
+
+// ── STATS ──
+function updateStats() {
+  const db = getDB();
+  const clients = Object.values(db);
+  const today = new Date().toLocaleDateString('es-CL', {day:'2-digit',month:'2-digit',year:'numeric'});
+  const thisMonth = today.slice(3); // MM/YYYY
+
+  document.getElementById('stat-total').textContent = clients.length;
+  document.getElementById('stat-hoy').textContent = clients.filter(c => c.fecha === today).length;
+  document.getElementById('stat-mes').textContent = clients.filter(c => c.fecha && c.fecha.slice(3) === thisMonth).length;
+}
+
+// ── VERIFY ──
+function verifyClient() {
+  const id = document.getElementById('scan-input').value.trim().toUpperCase();
+  document.getElementById('client-result').classList.remove('visible');
+  document.getElementById('not-found').classList.remove('visible');
+  if (!id) return;
+
+  const db = getDB();
+  if (db[id]) {
+    showResult(db[id]);
+    return;
+  }
+
+  // Intentar desde Sheets
+  const sheetsUrl = localStorage.getItem('jym_sheets_url');
+  if (sheetsUrl) {
+    fetch(sheetsUrl + '?id=' + encodeURIComponent(id))
+      .then(r => r.json())
+      .then(data => {
+        if (data.found) {
+          const dbb = getDB();
+          dbb[data.id] = data;
+          saveDB(dbb);
+          updateStats();
+          showResult(data);
+        } else {
+          document.getElementById('not-found').classList.add('visible');
+        }
+      })
+      .catch(() => { document.getElementById('not-found').classList.add('visible'); });
+  } else {
+    document.getElementById('not-found').classList.add('visible');
+  }
+}
+
+function showResult(c) {
+  const initials = (c.nombre || 'NN').split(' ').map(w => w[0] || '').slice(0,2).join('').toUpperCase();
+  document.getElementById('res-avatar').textContent = initials;
+  document.getElementById('res-nombre').textContent = c.nombre || '—';
+  document.getElementById('res-empresa').textContent = c.empresa || '—';
+  document.getElementById('res-rut').textContent = c.rut || '—';
+  document.getElementById('res-email').textContent = c.email || '—';
+  document.getElementById('res-telefono').textContent = c.telefono || '—';
+  document.getElementById('res-id').textContent = c.id || '—';
+  document.getElementById('res-fecha').textContent = (c.fecha || '—') + (c.hora ? ' · ' + c.hora : '');
+  document.getElementById('client-result').classList.add('visible');
+}
+
+// ── LIST ──
+function renderList() {
+  const db = getDB();
+  const q = (document.getElementById('list-search')?.value || '').toLowerCase();
+  const clients = Object.values(db).filter(c => {
+    if (!q) return true;
+    return (c.nombre||'').toLowerCase().includes(q) ||
+           (c.empresa||'').toLowerCase().includes(q) ||
+           (c.rut||'').includes(q) ||
+           (c.id||'').toLowerCase().includes(q);
+  }).sort((a,b) => (b.fecha||'').localeCompare(a.fecha||''));
+
+  const container = document.getElementById('client-list');
+  if (!clients.length) {
+    container.innerHTML = '<div class="list-empty">No se encontraron clientes.</div>';
+    return;
+  }
+
+  container.innerHTML = clients.map(c => {
+    const initials = (c.nombre||'NN').split(' ').map(w=>w[0]||'').slice(0,2).join('').toUpperCase();
+    return `<div class="client-row" onclick="loadClientToVerify('${c.id}')">
+      <div class="row-avatar">${initials}</div>
+      <div class="row-info">
+        <div class="row-name">${c.nombre||'—'}</div>
+        <div class="row-empresa">${c.empresa||'—'}</div>
+      </div>
+      <div class="row-id">${c.id||'—'}</div>
+      <div class="row-fecha">${c.fecha||'—'}</div>
+    </div>`;
+  }).join('');
+}
+
+function loadClientToVerify(id) {
+  switchTab('verificar');
+  document.getElementById('scan-input').value = id;
+  verifyClient();
+}
+
+// ── TABS ──
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    const tabs = ['verificar','clientes','config'];
+    t.classList.toggle('active', tabs[i] === name);
+  });
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (name === 'clientes') renderList();
+  if (name === 'config') {
+    document.getElementById('local-count').textContent = Object.keys(getDB()).length;
+  }
+}
+
+// ── CONFIG ──
+function changePwd() {
+  const v = document.getElementById('new-pwd').value.trim();
+  if (v.length < 4) { document.getElementById('pwd-status').textContent = 'Mínimo 4 caracteres.'; return; }
+  localStorage.setItem('jym_admin_pwd', v);
+  document.getElementById('new-pwd').value = '';
+  document.getElementById('pwd-status').textContent = '✓ Contraseña actualizada.';
+}
+
+function saveSheets() {
+  const url = document.getElementById('sheets-url').value.trim();
+  if (!url) { document.getElementById('sheets-status').textContent = 'Ingrese una URL válida.'; return; }
+  localStorage.setItem('jym_sheets_url', url);
+  document.getElementById('sheets-status').textContent = '✓ URL guardada.';
+}
+
+function copyScript() {
+  navigator.clipboard.writeText(APPS_SCRIPT).then(() => {
+    const b = event.target;
+    const orig = b.textContent;
+    b.textContent = '✓ Copiado';
+    setTimeout(() => b.textContent = orig, 2000);
+  });
+}
+
+function clearAll() {
+  if (confirm('¿Seguro? Esto eliminará todos los datos locales. Los datos en Google Sheets no se borran.')) {
+    localStorage.removeItem('jym_db');
+    updateStats();
+    renderList();
+    document.getElementById('local-count').textContent = '0';
+    document.getElementById('client-result').classList.remove('visible');
+    document.getElementById('not-found').classList.remove('visible');
+  }
+}
+</script>
+</body>
+</html>
