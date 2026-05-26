@@ -613,7 +613,7 @@ function getDB() {
 
 // ── SHEETS ──
 function sendToSheets(client) {
-  if (!SHEETS_URL || SHEETS_URL === 'PEGA_AQUI_LA_URL_DEL_APPS_SCRIPT') return;
+  if (!SHEETS_URL || SHEETS_URL === 'https://script.google.com/macros/s/AKfycbyfoKckU1bRgeKA1vO4DJMuecZNj08ZinVCUl4Ik_xKOUUH0sKxsj6R2MooVFjd7QLf/exec') return;
   fetch(SHEETS_URL, {
     method: 'POST',
     mode: 'no-cors',
